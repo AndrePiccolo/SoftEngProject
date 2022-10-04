@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -46,4 +47,7 @@ public class Customer {
 
     @Column(name = "customer_phone_number", nullable = false, length = 13)
     private String customerPhoneNumber;
+
+    @OneToMany(mappedBy = "customer")
+    private Set<Doggo> dog;
 }

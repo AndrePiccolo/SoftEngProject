@@ -1,7 +1,7 @@
 package com.douglas.rentDog.rest;
 
-import com.douglas.rentDog.database.entity.Customer;
-import com.douglas.rentDog.database.repository.CustomerRepository;
+import com.douglas.rentDog.database.entity.Doggo;
+import com.douglas.rentDog.database.repository.DogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,22 +21,29 @@ public class RestContoller {
     public static final String URL_MAPPING = "/rentdog/v1";
 
     @Autowired
-    CustomerRepository customerRepository;
+    DogRepository customerRepository;
 
     @GetMapping("/sayhello")
-    public ResponseEntity<CustomerJson> sayHello(@RequestHeader(value="Authorization", required = true) String auth){
-        Optional<Customer> customer = customerRepository.findById(1);
-        CustomerJson response = CustomerJson.builder().id(customer.get().getCustomerId())
-                .firstName(customer.get().getCustomerFirstName())
-                .lastName(customer.get().getCustomerLastName())
-                .email(customer.get().getCustomerEmail())
-                .dob(customer.get().getCustomerDob())
-                .password(customer.get().getCustomerPassword())
-                .address(customer.get().getCustomerStreetAddress())
-                .city(customer.get().getCustomerCity())
-                .province(customer.get().getCustomerProvince())
-                .postalCode(customer.get().getCustomerPostalCode())
-                .phoneNumber(customer.get().getCustomerPhoneNumber()).build();
+    public ResponseEntity<DogJson> sayHello(@RequestHeader(value="Authorization", required = true) String auth){
+        Optional<Doggo> customer = customerRepository.findById(1);
+        DogJson response = DogJson.builder().dogId(customer.get().getDogId())
+                .customerId(CustomerJson.builder().id(customer.get().getCustomer().getCustomerId())
+                    .firstName(customer.get().getCustomer().getCustomerFirstName())
+                    .lastName(customer.get().getCustomer().getCustomerLastName())
+                    .email(customer.get().getCustomer().getCustomerEmail())
+                    .dob(customer.get().getCustomer().getCustomerDob())
+                    .password(customer.get().getCustomer().getCustomerPassword())
+                    .address(customer.get().getCustomer().getCustomerStreetAddress())
+                    .city(customer.get().getCustomer().getCustomerCity())
+                    .province(customer.get().getCustomer().getCustomerProvince())
+                    .postalCode(customer.get().getCustomer().getCustomerPostalCode())
+                    .phoneNumber(customer.get().getCustomer().getCustomerPhoneNumber()).build())
+                .dogName(customer.get().getDogName())
+                .dogBreed(customer.get().getDogBreed())
+                .dogSize(customer.get().getDogSize())
+                .dogDesc(customer.get().getDogDesc())
+                .dogAvailability(customer.get().getDogAvailability())
+                .dogPriceHour(customer.get().getDogPriceHour()).build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
