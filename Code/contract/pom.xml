@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.douglas</groupId>
-	<artifactId>rentDog</artifactId>
+	<artifactId>contract</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>rentDog</name>
-	<description>Rent a Dog Application Project</description>
+	<name>contract</name>
+	<description>Microservice responsible to contract</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>

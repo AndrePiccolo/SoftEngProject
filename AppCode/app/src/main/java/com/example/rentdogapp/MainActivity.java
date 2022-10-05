@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         txtResult = findViewById(R.id.txtDisplayContent);
         sendRequest = findViewById(R.id.btnSendRequest);
 
+        txtResult.setText("Press Button to Start");
+
         listener = new MyCallback(new MyCallback.BackendResponse() {
             @Override
             public void callbackResult(String message) {
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
+                    txtResult.setText("Processing...");
                     new HttpConnector(listener);
                 } catch (IOException e) {
                     e.printStackTrace();
