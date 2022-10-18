@@ -18,34 +18,32 @@
             </a>
             <a class="flex-lg-fill text-lg-center nav-link fs-4" aria-current="page" href="Home.html">Home</a>
             <a class="flex-lg-fill text-lg-center nav-link fs-4  active" href="#">Search</a>
-            <a class="flex-lg-fill text-lg-center nav-link fs-4" href="#">Contract</a>
+            <a class="flex-lg-fill text-lg-center nav-link fs-4" href="Contract.html">Contract</a>
             <a class="flex-lg-fill text-lg-center nav-link fs-4" href="RegisterDog.html">Register Dog</a>
             <a class="flex-lg-fill text-lg-center nav-link fs-4" href="Login.html">Log out</a>
         </nav>
     </div>
     <div id="content" class="container-fluid">
         <div class="col-md-12">
-            <form class="row">
-                <div class="row m-2">
-                    <div class="col-auto">
-                        <label for="inputSearchType" class="form-label">Search By:</label>
-                    </div>
-                    <div class="col-auto">
-                        <select id="inputSearchType" class="form-select">
-                            <option value="dog">Dog Name</option>
-                            <option value="breed">Breed</option>
-                            <option value="size">Size</option>
-                        </select>
-                    </div>
-                    <div class="col-auto">
-                        <label for="inputKeyword" class="form-label">Keyword:</label>
-                    </div>
-                    <div class="col-auto">
-                        <input type="text" class="form-control" id="inputKeyword">
-                    </div>
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-primary btn-lg">Search</button>
-                    </div>
+            <form class="row m-2">
+                <div class="col-auto">
+                    <label for="inputSearchType" class="form-label-lg fw-bolder">Search By:</label>
+                </div>
+                <div class="col-auto">
+                    <select id="inputSearchType" class="form-select-lg">
+                        <option value="dog">Dog Name</option>
+                        <option value="breed">Breed</option>
+                        <option value="size">Size</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <label for="inputKeyword" class="form-label-lg fw-bolder">Keyword:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" class="form-control-lg" id="inputKeyword">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary btn-lg">Search</button>
                 </div>
             </form>
         </div>
