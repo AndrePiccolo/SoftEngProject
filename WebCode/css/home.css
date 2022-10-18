@@ -1,12 +1,6 @@
-#content {
+body {
     background-image: radial-gradient(white, darkkhaki);
-    padding-top: 3%;
-    padding-bottom: 3%;
-    padding-left: 4%;
-}
-
-.card {
-    margin-bottom: 2%;
+    height: 100vh;
 }
 
 footer {
