@@ -24,73 +24,348 @@
         </nav>
     </div>
     <div id="content" class="container-fluid">
+        <div class="col-md-12">
+            <form class="row">
+                <div class="row m-2">
+                    <div class="col-auto">
+                        <label for="inputSearchType" class="form-label">Search By:</label>
+                    </div>
+                    <div class="col-auto">
+                        <select id="inputSearchType" class="form-select">
+                            <option value="dog">Dog Name</option>
+                            <option value="breed">Breed</option>
+                            <option value="size">Size</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <label for="inputKeyword" class="form-label">Keyword:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" class="form-control" id="inputKeyword">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary btn-lg">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
         <div class="row">
-            <div class="col-sm-4">
-                <div class="card" style="width: 18rem;">
-                    <img src="images/logo.jpg" class="card-img-top" alt="...">
+            <div class="col-md-3">
+                <div class="card">
+                    <img src=" images/logo.jpg" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title text-center">Dog Name</h5>
-                        <p class="card-text">Dog description</p>
-                        <p class="card-text">Available days</p>
-                        <a href="#" class="btn btn-primary">Rent</a>
+                        <p class="card-text">Breed / Size / Price</p>
+                        <p class="card-text">Description</p>
+                        <p class="card-text">Availability</p>
+                        <form>
+                            <div class="col-mb-1">
+                                <label for="inputDateTime" class="form-label">Select Date</label>
+                                <input type="date" class="form-control" id="inputDateTime">
+                            </div>
+                            <div class="row g-4 m-1">
+                                <div class="col-auto">
+                                    <label for="inputStartTime" class="form-label">Start Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputStartTime">
+                                </div>
+
+                                <div class="col-auto">
+                                    <label for="inputEndTime" class="form-label">End Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputEndTime">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Rent</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
-                <div class="card" style="width: 18rem;">
-                    <img src="images/logo.jpg" class="card-img-top" alt="...">
+            <div class="col-md-3">
+                <div class="card">
+                    <img src=" images/logo.jpg" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title text-center">Dog Name</h5>
-                        <p class="card-text">Dog description</p>
-                        <p class="card-text">Available days</p>
-                        <a href="#" class="btn btn-primary">Rent</a>
+                        <p class="card-text">Breed / Size / Price</p>
+                        <p class="card-text">Description</p>
+                        <p class="card-text">Availability</p>
+                        <form>
+                            <div class="col-mb-1">
+                                <label for="inputDateTime" class="form-label">Select Date</label>
+                                <input type="date" class="form-control" id="inputDateTime">
+                            </div>
+                            <div class="row g-4 m-1">
+                                <div class="col-auto">
+                                    <label for="inputStartTime" class="form-label">Start Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputStartTime">
+                                </div>
+
+                                <div class="col-auto">
+                                    <label for="inputEndTime" class="form-label">End Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputEndTime">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Rent</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
-                <div class="card" style="width: 18rem;">
-                    <img src="images/logo.jpg" class="card-img-top" alt="...">
+            <div class="col-md-3">
+                <div class="card">
+                    <img src=" images/logo.jpg" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title text-center">Dog Name</h5>
-                        <p class="card-text">Dog description</p>
-                        <p class="card-text">Available days</p>
-                        <a href="#" class="btn btn-primary">Rent</a>
+                        <p class="card-text">Breed / Size / Price</p>
+                        <p class="card-text">Description</p>
+                        <p class="card-text">Availability</p>
+                        <form>
+                            <div class="col-mb-1">
+                                <label for="inputDateTime" class="form-label">Select Date</label>
+                                <input type="date" class="form-control" id="inputDateTime">
+                            </div>
+                            <div class="row g-4 m-1">
+                                <div class="col-auto">
+                                    <label for="inputStartTime" class="form-label">Start Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputStartTime">
+                                </div>
+
+                                <div class="col-auto">
+                                    <label for="inputEndTime" class="form-label">End Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputEndTime">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Rent</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
-                <div class="card" style="width: 18rem;">
-                    <img src="images/logo.jpg" class="card-img-top" alt="...">
+            <div class="col-md-3">
+                <div class="card">
+                    <img src=" images/logo.jpg" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title text-center">Dog Name</h5>
-                        <p class="card-text">Dog description</p>
-                        <p class="card-text">Available days</p>
-                        <a href="#" class="btn btn-primary">Rent</a>
+                        <p class="card-text">Breed / Size / Price</p>
+                        <p class="card-text">Description</p>
+                        <p class="card-text">Availability</p>
+                        <form>
+                            <div class="col-mb-1">
+                                <label for="inputDateTime" class="form-label">Select Date</label>
+                                <input type="date" class="form-control" id="inputDateTime">
+                            </div>
+                            <div class="row g-4 m-1">
+                                <div class="col-auto">
+                                    <label for="inputStartTime" class="form-label">Start Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputStartTime">
+                                </div>
+
+                                <div class="col-auto">
+                                    <label for="inputEndTime" class="form-label">End Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputEndTime">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Rent</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
-                <div class="card" style="width: 18rem;">
-                    <img src="images/logo.jpg" class="card-img-top" alt="...">
+            <div class="col-md-3">
+                <div class="card">
+                    <img src=" images/logo.jpg" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title text-center">Dog Name</h5>
-                        <p class="card-text">Dog description</p>
-                        <p class="card-text">Available days</p>
-                        <a href="#" class="btn btn-primary">Rent</a>
+                        <p class="card-text">Breed / Size / Price</p>
+                        <p class="card-text">Description</p>
+                        <p class="card-text">Availability</p>
+                        <form>
+                            <div class="col-mb-1">
+                                <label for="inputDateTime" class="form-label">Select Date</label>
+                                <input type="date" class="form-control" id="inputDateTime">
+                            </div>
+                            <div class="row g-4 m-1">
+                                <div class="col-auto">
+                                    <label for="inputStartTime" class="form-label">Start Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputStartTime">
+                                </div>
+
+                                <div class="col-auto">
+                                    <label for="inputEndTime" class="form-label">End Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputEndTime">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Rent</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-4">
-                <div class="card" style="width: 18rem;">
-                    <img src="images/logo.jpg" class="card-img-top" alt="...">
+            <div class="col-md-3">
+                <div class="card">
+                    <img src=" images/logo.jpg" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title text-center">Dog Name</h5>
-                        <p class="card-text">Dog description</p>
-                        <p class="card-text">Available days</p>
-                        <a href="#" class="btn btn-primary">Rent</a>
+                        <p class="card-text">Breed / Size / Price</p>
+                        <p class="card-text">Description</p>
+                        <p class="card-text">Availability</p>
+                        <form>
+                            <div class="col-mb-1">
+                                <label for="inputDateTime" class="form-label">Select Date</label>
+                                <input type="date" class="form-control" id="inputDateTime">
+                            </div>
+                            <div class="row g-4 m-1">
+                                <div class="col-auto">
+                                    <label for="inputStartTime" class="form-label">Start Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputStartTime">
+                                </div>
+
+                                <div class="col-auto">
+                                    <label for="inputEndTime" class="form-label">End Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputEndTime">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Rent</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <img src=" images/logo.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Dog Name</h5>
+                        <p class="card-text">Breed / Size / Price</p>
+                        <p class="card-text">Description</p>
+                        <p class="card-text">Availability</p>
+                        <form>
+                            <div class="col-mb-1">
+                                <label for="inputDateTime" class="form-label">Select Date</label>
+                                <input type="date" class="form-control" id="inputDateTime">
+                            </div>
+                            <div class="row g-4 m-1">
+                                <div class="col-auto">
+                                    <label for="inputStartTime" class="form-label">Start Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputStartTime">
+                                </div>
+
+                                <div class="col-auto">
+                                    <label for="inputEndTime" class="form-label">End Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputEndTime">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Rent</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <img src=" images/logo.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Dog Name</h5>
+                        <p class="card-text">Breed / Size / Price</p>
+                        <p class="card-text">Description</p>
+                        <p class="card-text">Availability</p>
+                        <form>
+                            <div class="col-mb-1">
+                                <label for="inputDateTime" class="form-label">Select Date</label>
+                                <input type="date" class="form-control" id="inputDateTime">
+                            </div>
+                            <div class="row g-4 m-1">
+                                <div class="col-auto">
+                                    <label for="inputStartTime" class="form-label">Start Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputStartTime">
+                                </div>
+
+                                <div class="col-auto">
+                                    <label for="inputEndTime" class="form-label">End Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputEndTime">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Rent</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <img src=" images/logo.jpg" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Dog Name</h5>
+                        <p class="card-text">Breed / Size / Price</p>
+                        <p class="card-text">Description</p>
+                        <p class="card-text">Availability</p>
+                        <form>
+                            <div class="col-mb-1">
+                                <label for="inputDateTime" class="form-label">Select Date</label>
+                                <input type="date" class="form-control" id="inputDateTime">
+                            </div>
+                            <div class="row g-4 m-1">
+                                <div class="col-auto">
+                                    <label for="inputStartTime" class="form-label">Start Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputStartTime">
+                                </div>
+
+                                <div class="col-auto">
+                                    <label for="inputEndTime" class="form-label">End Time</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="time" class="form-control" id="inputEndTime">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Rent</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
     <div>
