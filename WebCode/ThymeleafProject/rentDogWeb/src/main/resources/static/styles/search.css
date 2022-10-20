@@ -1,0 +1,12 @@
+body {
+    background-image: radial-gradient(white, darkkhaki);
+    height: 100vh;
+}
+
+#content {
+    padding-top: 1%;
+}
+
+.card {
+    margin-bottom: 2%;
+}
