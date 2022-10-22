@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 
@@ -18,30 +19,37 @@ import javax.servlet.http.HttpSession;
 @Slf4j
 public class RentDogController {
 
+    private static final String LOGIN = "login";
+    private static final String REGISTER = "register";
+
     @Autowired
     private CustomerRepository customerRepository;
 
     @GetMapping(path = "/login")
     public String login(Model model) {
-        model.addAttribute("customer", new Customer());
         model.addAttribute("errorMessage", "F");
-        return "login";
+        return "/login";
     }
 
     @PostMapping(path = "/login")
-    public String validateLogin(Model model, Customer customer, HttpSession session) {
+    public String validateLogin(Model model, @RequestParam("action") String action,
+                                @RequestParam("userLogin") String user,
+                                @RequestParam("userPassword") String pwd,
+                                Customer customer, HttpSession session) {
 
-        if (!customer.getCustomerEmail().isEmpty() && !customer.getCustomerPassword().isEmpty()) {
+        if(LOGIN.equalsIgnoreCase(action)){
+            if (!user.isEmpty() && !pwd.isEmpty()) {
 
-            Customer dbRegister = customerRepository.findCustomerByCustomerEmailEquals(customer.getCustomerEmail());
-            if (!dbRegister.getCustomerPassword().isEmpty()) {
-                if (DecoderUtils.verifyUserPassword(customer.getCustomerPassword(),
-                        dbRegister.getCustomerPassword(),
-                        customer.getCustomerEmail())) {
-                    session.setAttribute("user", customer.getCustomerEmail());
-                    return "redirect:/home";
+                Customer dbRegister = customerRepository.findCustomerByCustomerEmailEquals(user);
+                if (!dbRegister.getCustomerPassword().isEmpty()) {
+                    if (DecoderUtils.verifyUserPassword(pwd, dbRegister.getCustomerPassword(), user)) {
+                        session.setAttribute("user", dbRegister.getCustomerEmail());
+                        return "redirect:/home";
+                    }
                 }
             }
+        } else {
+            return "redirect:/registeruser";
         }
         model.addAttribute("errorMessage", "T");
         return "/login";
@@ -62,11 +70,21 @@ public class RentDogController {
     }
 
     @GetMapping(path = "/contract")
-    public void contract() {
+    public String contract(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        } else {
+
+        }
+        return "/contract";
     }
 
     @GetMapping(path = "/registerdog")
-    public void registerdog() {
+    public String registerdog(HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
+        return "/registerdog";
     }
 
     @GetMapping(path = "/registeruser")
@@ -74,8 +92,31 @@ public class RentDogController {
         //        String pwd = DecoderUtils.generateSecurePassword(customer.getCustomerPassword(), customer.getCustomerEmail());
     }
 
+    @PostMapping(path = "/registeruser")
+    public String addNewUser(@RequestParam("inputName") String name,
+                              @RequestParam("inputEmail") String email,
+                              @RequestParam("inputPassword") String pwd,
+                              @RequestParam("confirmPassword") String confirmPwd,
+                              @RequestParam("inputDob") String dob,
+                              @RequestParam("inputPhoneNumber") String phone,
+                              @RequestParam("inputAddress") String address,
+                              @RequestParam("inputCity") String city,
+                              @RequestParam("inputProvince") String province,
+                              @RequestParam("inputPostalCode") String postalCode,
+                              @RequestParam("gridCheck") String acceptedTerms) {
+        log.info(name + " " + email + " " + pwd + " " + confirmPwd + " " + dob + " " + phone + " " +
+                address + " " + city + " " + province + " " + postalCode + " " + acceptedTerms);
+        return "redirect:/login";
+    }
+
     @GetMapping(path = "/search")
-    public void search() {
+    public String search(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        } else {
+
+        }
+        return "/search";
     }
 
     @GetMapping(path = "/logout")
