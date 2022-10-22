@@ -19,49 +19,45 @@
             <a class="flex-lg-fill text-lg-center nav-link fs-4" th:href="@{search}">Search</a>
             <a class="flex-lg-fill text-lg-center nav-link fs-4" th:href="@{contract}">Contract</a>
             <a class="flex-lg-fill text-lg-center nav-link fs-4" th:href="@{registerdog}">Register Dog</a>
-            <a class="flex-lg-fill text-lg-center nav-link fs-4" th:href="@{login}">Log out</a>
+            <a class="flex-lg-fill text-lg-center nav-link fs-4" th:href="@{logout}">Log out</a>
         </nav>
     </div>
     <div id="mainContainer" class="container-fluid d-flex justify-content-center">
         <div class="jumbotron jumbotron-fluid m-4">
             <div class="container">
-                <h1 class="display-4">Hello, User!</h1>
+                <h1 class="display-4" th:text="${welcomeMessage}"></h1>
                 <p class="lead">Some information about the system</p>
                 <hr class="my-4">
                 <div class="m-5">
                     <form class="row g-3">
                         <div class="col-md-6">
                             <label for="inputName" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="inputName" value="User User">
+                            <input type="text" class="form-control" id="inputName" th:value="${user.getCustomerName()}">
                             <div id="nameHelpBlock" class="form-text">
                                 Enter first and last name.
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label for="inputPhoneNumber" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="inputPhoneNumber" value="7773335555">
+                            <input type="tel" class="form-control" id="inputPhoneNumber" th:value="${user.getCustomerPhoneNumber()}">
                         </div>
                         <div class="col-md-4">
                             <label for="inputAddress" class="form-label">Address</label>
-                            <input type="text" class="form-control" id="inputAddress" value="1234 Main St">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="inputAddress2" class="form-label">Address 2</label>
-                            <input type="text" class="form-control" id="inputAddress2" value="Apartment 300">
+                            <input type="text" class="form-control" id="inputAddress" th:value="${user.getCustomerStreetAddress()}">
                         </div>
                         <div class="col-md-2">
                             <label for="inputCity" class="form-label">City</label>
-                            <input type="text" class="form-control" id="inputCity" value="Surrey">
+                            <input type="text" class="form-control" id="inputCity" th:value="${user.getCustomerCity()}">
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                         </div>
                         <div class="col-md-1">
                             <label for="inputProvince" class="form-label">Province</label>
-                            <input type="text" class="form-control" id="inputProvince" value="BC">
+                            <input type="text" class="form-control" id="inputProvince" th:value="${user.getCustomerProvince()}">
                         </div>
                         <div class="col-md-2">
                             <label for="inputPostalCode" class="form-label">Postal Code</label>
-                            <input type="text" class="form-control" id="inputPostalCode" value="V3T7R4">
+                            <input type="text" class="form-control" id="inputPostalCode" th:value="${user.getCustomerPostalCode()}">
                         </div>
                         <p class="lead">
                             <a class="btn btn-primary btn-lg" href="#" role="button">Update my information</a>
@@ -69,7 +65,10 @@
                     </form>
                 </div>
                 <hr class="my-4">
-                <div class="m-5">
+                <div class="m-5" th:if="${user.getDog().isEmpty()}">
+                    <h1 class="display-4">No Dog Information</h1>
+                </div>
+                <div class="m-5" th:unless="${user.getDog().isEmpty()}">
                     <table class="table table-light table-hover table-bordered m-3">
                         <thead>
                             <tr>
@@ -85,28 +84,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Smal</td>
-                                <td>Breed</td>
-                                <td>description description description description description description description
-                                </td>
-                                <td>Monday, Thursday</td>
-                                <td>44</td>
-                                <td><button type="submit" class="btn btn-primary"
-                                        formaction="RegisterDog.html">U</button></td>
-                                <td><button type="submit" class="btn btn-danger">D</button></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">2</th>
-                                <td>Mark 2</td>
-                                <td>Large</td>
-                                <td>Breed</td>
-                                <td>description description description description description description description
-                                </td>
-                                <td>Monday, Thursday, Friday</td>
-                                <td>25</td>
+                            <tr th:each="dog:${user.getDog()}">
+                                <th scope="row" th:text="${dog.getDogId}"></th>
+                                <td th:text="${dog.getDogName}"></td>
+                                <td th:text="${dog.getDogSize}"></td>
+                                <td th:text="${dog.getDogBreed}">Breed</td>
+                                <td th:text="${dog.getDogDesc}"></td>
+                                <td th:text="${dog.getDogAvailability}"></td>
+                                <td th:text="${dog.getDogPriceHour}"></td>
                                 <td><button type="submit" class="btn btn-primary"
                                         formaction="RegisterDog.html">U</button></td>
                                 <td><button type="submit" class="btn btn-danger">D</button></td>
