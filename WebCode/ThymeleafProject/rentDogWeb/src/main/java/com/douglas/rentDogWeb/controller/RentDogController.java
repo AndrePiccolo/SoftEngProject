@@ -94,8 +94,6 @@ public class RentDogController {
     @GetMapping(path = "/registeruser")
     public String registeruser(Model model) {
         model.addAttribute("inputErrorMessage", "F");
-        model.addAttribute("passwordErrorMessage", "F");
-        model.addAttribute("userErrorMessage", "F");
         return "/registeruser";
     }
 
