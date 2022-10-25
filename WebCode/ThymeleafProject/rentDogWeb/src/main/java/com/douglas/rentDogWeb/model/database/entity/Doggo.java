@@ -1,8 +1,6 @@
 package com.douglas.rentDogWeb.model.database.entity;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -12,7 +10,7 @@ import javax.persistence.*;
 public class Doggo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "doggo_id", nullable = false)
     private Integer dogId;
 

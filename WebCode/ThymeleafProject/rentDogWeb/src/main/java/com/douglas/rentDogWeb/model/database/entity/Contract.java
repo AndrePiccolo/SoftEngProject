@@ -1,8 +1,6 @@
 package com.douglas.rentDogWeb.model.database.entity;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -12,7 +10,7 @@ import java.util.Date;
 @Table(name = "contract")
 public class Contract {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "contract_id", nullable = false)
     private Integer id;
 
