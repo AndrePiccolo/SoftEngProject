@@ -1,22 +1,26 @@
 package com.douglas.rentDogWeb.controller;
 
+import com.douglas.rentDogWeb.controller.entity.DogRequest;
 import com.douglas.rentDogWeb.model.database.entity.Customer;
+import com.douglas.rentDogWeb.model.database.entity.Doggo;
 import com.douglas.rentDogWeb.model.database.repository.CustomerRepository;
+import com.douglas.rentDogWeb.model.database.repository.DogRepository;
 import com.douglas.rentDogWeb.security.DecoderUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,9 +29,17 @@ public class RentDogController {
 
     private static final String LOGIN = "login";
     private static final String REGISTER = "register";
+    private static final List<String> LIST_BREED = new ArrayList<>(Arrays.asList("Golden Retrievers",
+            "Boston Terriers", "Labrador Retrievers",
+            "Poodles", "Border Collie", "Beagle", "Irish Setter", "Staffordshire Bull Terrier",
+            "Cavalier King Charles Spaniel", "Cockapoo", "Boxer", "Shih Tzu", "French Bulldog",
+            "Basset Hound", "Cocker Spaniel", "Greyhound", "Great Dane", "Samoyed", "West Highland Terriers",
+            "Pembroke Welsh Corgi"));
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private DogRepository dogRepository;
 
     @GetMapping(path = "/login")
     public String login(Model model) {
@@ -48,6 +60,7 @@ public class RentDogController {
                 if (!dbRegister.getCustomerPassword().isEmpty()) {
                     if (DecoderUtils.verifyUserPassword(pwd, dbRegister.getCustomerPassword(), user)) {
                         session.setAttribute("user", dbRegister.getCustomerEmail());
+                        session.setAttribute("userID", dbRegister.getCustomerId());
                         return "redirect:/home";
                     }
                 }
@@ -84,11 +97,47 @@ public class RentDogController {
     }
 
     @GetMapping(path = "/registerdog")
-    public String registerdog(HttpSession session) {
+    public String registerdog(Model model, HttpSession session) {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
+        model.addAttribute("breedList", LIST_BREED);
+        model.addAttribute("inputErrorMessage", "F");
+        model.addAttribute("dogRequest", new DogRequest());
         return "/registerdog";
+    }
+
+    @PostMapping(path = "/registerdog")
+    public String addNewDog(Model model, HttpSession session,
+                            @ModelAttribute DogRequest dog) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
+
+        if (dog.getName().isBlank() || dog.getDescription().isBlank() || dog.getPrice().isBlank()) {
+            model.addAttribute("inputErrorMessage", "T");
+            model.addAttribute("errorMessage", "Please, fill up all the fields.");
+            model.addAttribute("breedList", LIST_BREED);
+            return "/registerdog";
+        }
+
+        dogRepository.save(Doggo.builder()
+                .customer(customerRepository.findCustomerByCustomerEmailEquals(session.getAttribute("user").toString()))
+                .dogName(dog.getName())
+                .dogSize(dog.getSize())
+                .dogBreed(dog.getBreed())
+                .dogDesc(dog.getDescription())
+                .dogPriceHour(Double.parseDouble(dog.getPrice()))
+                .availabilitySunday((dog.getSunday() == null) ? 0 : 1)
+                .availabilityMonday((dog.getMonday() == null) ? 0 : 1)
+                .availabilityTuesday((dog.getTuesday() == null) ? 0 : 1)
+                .availabilityWednesday((dog.getWednesday() == null) ? 0 : 1)
+                .availabilityThursday((dog.getThursday() == null) ? 0 : 1)
+                .availabilityFriday((dog.getFriday() == null) ? 0 : 1)
+                .availabilitySaturday((dog.getSaturday() == null) ? 0 : 1)
+                .build());
+
+        return "redirect:/home";
     }
 
     @GetMapping(path = "/registeruser")
@@ -123,7 +172,7 @@ public class RentDogController {
 
             //check if email already in use
             Customer dbRegister = customerRepository.findCustomerByCustomerEmailEquals(email);
-            if (dbRegister!=null) {
+            if (dbRegister != null) {
                 model.addAttribute("inputErrorMessage", "T");
                 model.addAttribute("errorMessage", "Please, choose another email. Email is already in use.");
                 return "/registeruser";
@@ -152,7 +201,7 @@ public class RentDogController {
 
             Date birthday = new SimpleDateFormat("yyyy-MM-dd").parse(dob);
 
-            customerRepository.save( Customer.builder().customerName(name)
+            customerRepository.save(Customer.builder().customerName(name)
                     .customerEmail(email)
                     .customerPassword(DecoderUtils.generateSecurePassword(pwd, email))
                     .customerDob(birthday)
@@ -184,6 +233,7 @@ public class RentDogController {
     @GetMapping(path = "/logout")
     public String logout(HttpSession session) {
         session.removeAttribute("user");
+        session.removeAttribute("userID");
         return "redirect:/login";
     }
 }

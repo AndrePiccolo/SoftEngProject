@@ -4,9 +4,11 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -48,5 +50,5 @@ public class Customer {
     private String customerPhoneNumber;
 
     @OneToMany(mappedBy = "customer")
-    private Set<Doggo> dog;
+    private List<Doggo> dog;
 }

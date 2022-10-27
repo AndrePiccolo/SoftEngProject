@@ -1,10 +1,14 @@
 package com.douglas.rentDogWeb.model.database.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "doggo")
 public class Doggo {
@@ -15,7 +19,7 @@ public class Doggo {
     private Integer dogId;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = false , insertable = false, updatable = false)
     private Customer customer;
 
     @Column(name = "doggo_name", nullable = false, length = 100)
@@ -30,8 +34,26 @@ public class Doggo {
     @Column(name = "doggo_description", nullable = false, length = 500)
     private String dogDesc;
 
-    @Column(name = "doggo_availability", nullable = false, length = 20)
-    private String dogAvailability;
+    @Column(name = "doggo_availability_sunday", nullable = false, length = 1)
+    private Integer availabilitySunday;
+
+    @Column(name = "doggo_availability_monday", nullable = false, length = 1)
+    private Integer availabilityMonday;
+
+    @Column(name = "doggo_availability_tuesday", nullable = false, length = 1)
+    private Integer availabilityTuesday;
+
+    @Column(name = "doggo_availability_wednesday", nullable = false, length = 1)
+    private Integer availabilityWednesday;
+
+    @Column(name = "doggo_availability_thursday", nullable = false, length = 1)
+    private Integer availabilityThursday;
+
+    @Column(name = "doggo_availability_friday", nullable = false, length = 1)
+    private Integer availabilityFriday;
+
+    @Column(name = "doggo_availability_saturday", nullable = false, length = 1)
+    private Integer availabilitySaturday;
 
     @Column(name = "doggo_price_per_hour", nullable = false)
     private Double dogPriceHour;

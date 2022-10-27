@@ -65,10 +65,10 @@
                     </form>
                 </div>
                 <hr class="my-4">
-                <div class="m-5" th:if="${user.getDog().isEmpty()}">
+                <div class="m-5" th:if="${user.getDog().size()==0}">
                     <h1 class="display-4">No Dog Information</h1>
                 </div>
-                <div class="m-5" th:unless="${user.getDog().isEmpty()}">
+                <div class="m-5" th:unless="${user.getDog().size()==0}">
                     <table class="table table-light table-hover table-bordered m-3">
                         <thead>
                             <tr>
@@ -90,7 +90,13 @@
                                 <td th:text="${dog.getDogSize}"></td>
                                 <td th:text="${dog.getDogBreed}">Breed</td>
                                 <td th:text="${dog.getDogDesc}"></td>
-                                <td th:text="${dog.getDogAvailability}"></td>
+                                <td th:text="${(dog.getAvailabilitySunday == 1 ? '|Sunday|' : ' ') +
+                                                (dog.getAvailabilityMonday == 1 ? '|Monday|' : ' ') +
+                                                (dog.getAvailabilityTuesday == 1 ? '|Tuesday|' : ' ') +
+                                                (dog.getAvailabilityWednesday == 1 ? '|Wednesday|' : ' ') +
+                                                (dog.getAvailabilityThursday == 1 ? '|Thursday|' : ' ') +
+                                                (dog.getAvailabilityFriday == 1 ? '|Friday|' : ' ') +
+                                                (dog.getAvailabilitySaturday == 1 ? '|Saturday|' : ' ')}"></td>
                                 <td th:text="${dog.getDogPriceHour}"></td>
                                 <td><button type="submit" class="btn btn-primary"
                                         formaction="RegisterDog.html">U</button></td>
