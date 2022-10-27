@@ -1,16 +1,17 @@
 package com.douglas.rentDogWeb.controller;
 
+import com.douglas.rentDogWeb.controller.entity.DogRequest;
 import com.douglas.rentDogWeb.model.database.entity.Customer;
+import com.douglas.rentDogWeb.model.database.entity.Doggo;
 import com.douglas.rentDogWeb.model.database.repository.CustomerRepository;
+import com.douglas.rentDogWeb.model.database.repository.DogRepository;
 import com.douglas.rentDogWeb.security.DecoderUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
@@ -37,6 +38,8 @@ public class RentDogController {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private DogRepository dogRepository;
 
     @GetMapping(path = "/login")
     public String login(Model model) {
@@ -94,33 +97,46 @@ public class RentDogController {
     }
 
     @GetMapping(path = "/registerdog")
-    public String registerdog(Model model,HttpSession session) {
+    public String registerdog(Model model, HttpSession session) {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
         model.addAttribute("breedList", LIST_BREED);
         model.addAttribute("inputErrorMessage", "F");
+        model.addAttribute("dogRequest", new DogRequest());
         return "/registerdog";
     }
 
     @PostMapping(path = "/registerdog")
-    public String addNewDog(Model model,HttpSession session,
-                            @RequestParam(name = "inputName", required = false) String name,
-                            @RequestParam(name = "inputSize", required = false) String size,
-                            @RequestParam(name = "inputBreed", required = false) String breed,
-                            @RequestParam(name = "description", required = false) String description,
-                            @RequestParam(name = "inputPrice", required = false) String price,
-                            @RequestParam(name = "sunday", required = false, defaultValue = "0") Integer sunday,
-                            @RequestParam(name = "monday", required = false, defaultValue = "0") Integer monday,
-                            @RequestParam(name = "tuesday", required = false, defaultValue = "0") Integer tuesday,
-                            @RequestParam(name = "wednesday", required = false, defaultValue = "0") Integer wednesday,
-                            @RequestParam(name = "thursday", required = false, defaultValue = "0") Integer thursday,
-                            @RequestParam(name = "friday", required = false, defaultValue = "0") Integer friday,
-                            @RequestParam(name = "saturday", required = false, defaultValue = "0") Integer saturday) {
+    public String addNewDog(Model model, HttpSession session,
+                            @ModelAttribute DogRequest dog) {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
-        log.info(name + size + breed + description + price + sunday + monday + tuesday + wednesday + thursday + friday + saturday);
+
+        if (dog.getName().isBlank() || dog.getDescription().isBlank() || dog.getPrice().isBlank()) {
+            model.addAttribute("inputErrorMessage", "T");
+            model.addAttribute("errorMessage", "Please, fill up all the fields.");
+            model.addAttribute("breedList", LIST_BREED);
+            return "/registerdog";
+        }
+
+        dogRepository.save(Doggo.builder()
+                .customer(customerRepository.findCustomerByCustomerEmailEquals(session.getAttribute("user").toString()))
+                .dogName(dog.getName())
+                .dogSize(dog.getSize())
+                .dogBreed(dog.getBreed())
+                .dogDesc(dog.getDescription())
+                .dogPriceHour(Double.parseDouble(dog.getPrice()))
+                .availabilitySunday((dog.getSunday() == null) ? 0 : 1)
+                .availabilityMonday((dog.getMonday() == null) ? 0 : 1)
+                .availabilityTuesday((dog.getTuesday() == null) ? 0 : 1)
+                .availabilityWednesday((dog.getWednesday() == null) ? 0 : 1)
+                .availabilityThursday((dog.getThursday() == null) ? 0 : 1)
+                .availabilityFriday((dog.getFriday() == null) ? 0 : 1)
+                .availabilitySaturday((dog.getSaturday() == null) ? 0 : 1)
+                .build());
+
         return "redirect:/home";
     }
 

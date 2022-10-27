@@ -1,10 +1,14 @@
 package com.douglas.rentDogWeb.model.database.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "doggo")
 public class Doggo {
@@ -15,7 +19,7 @@ public class Doggo {
     private Integer dogId;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = false , insertable = false, updatable = false)
     private Customer customer;
 
     @Column(name = "doggo_name", nullable = false, length = 100)
