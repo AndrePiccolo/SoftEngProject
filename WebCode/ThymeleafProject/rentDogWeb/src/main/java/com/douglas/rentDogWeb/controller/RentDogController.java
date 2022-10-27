@@ -16,7 +16,10 @@ import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,6 +28,12 @@ public class RentDogController {
 
     private static final String LOGIN = "login";
     private static final String REGISTER = "register";
+    private static final List<String> LIST_BREED = new ArrayList<>(Arrays.asList("Golden Retrievers",
+            "Boston Terriers", "Labrador Retrievers",
+            "Poodles", "Border Collie", "Beagle", "Irish Setter", "Staffordshire Bull Terrier",
+            "Cavalier King Charles Spaniel", "Cockapoo", "Boxer", "Shih Tzu", "French Bulldog",
+            "Basset Hound", "Cocker Spaniel", "Greyhound", "Great Dane", "Samoyed", "West Highland Terriers",
+            "Pembroke Welsh Corgi"));
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -48,6 +57,7 @@ public class RentDogController {
                 if (!dbRegister.getCustomerPassword().isEmpty()) {
                     if (DecoderUtils.verifyUserPassword(pwd, dbRegister.getCustomerPassword(), user)) {
                         session.setAttribute("user", dbRegister.getCustomerEmail());
+                        session.setAttribute("userID", dbRegister.getCustomerId());
                         return "redirect:/home";
                     }
                 }
@@ -84,11 +94,34 @@ public class RentDogController {
     }
 
     @GetMapping(path = "/registerdog")
-    public String registerdog(HttpSession session) {
+    public String registerdog(Model model,HttpSession session) {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
+        model.addAttribute("breedList", LIST_BREED);
+        model.addAttribute("inputErrorMessage", "F");
         return "/registerdog";
+    }
+
+    @PostMapping(path = "/registerdog")
+    public String addNewDog(Model model,HttpSession session,
+                            @RequestParam(name = "inputName", required = false) String name,
+                            @RequestParam(name = "inputSize", required = false) String size,
+                            @RequestParam(name = "inputBreed", required = false) String breed,
+                            @RequestParam(name = "description", required = false) String description,
+                            @RequestParam(name = "inputPrice", required = false) String price,
+                            @RequestParam(name = "sunday", required = false, defaultValue = "0") Integer sunday,
+                            @RequestParam(name = "monday", required = false, defaultValue = "0") Integer monday,
+                            @RequestParam(name = "tuesday", required = false, defaultValue = "0") Integer tuesday,
+                            @RequestParam(name = "wednesday", required = false, defaultValue = "0") Integer wednesday,
+                            @RequestParam(name = "thursday", required = false, defaultValue = "0") Integer thursday,
+                            @RequestParam(name = "friday", required = false, defaultValue = "0") Integer friday,
+                            @RequestParam(name = "saturday", required = false, defaultValue = "0") Integer saturday) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
+        log.info(name + size + breed + description + price + sunday + monday + tuesday + wednesday + thursday + friday + saturday);
+        return "redirect:/home";
     }
 
     @GetMapping(path = "/registeruser")
@@ -123,7 +156,7 @@ public class RentDogController {
 
             //check if email already in use
             Customer dbRegister = customerRepository.findCustomerByCustomerEmailEquals(email);
-            if (dbRegister!=null) {
+            if (dbRegister != null) {
                 model.addAttribute("inputErrorMessage", "T");
                 model.addAttribute("errorMessage", "Please, choose another email. Email is already in use.");
                 return "/registeruser";
@@ -152,7 +185,7 @@ public class RentDogController {
 
             Date birthday = new SimpleDateFormat("yyyy-MM-dd").parse(dob);
 
-            customerRepository.save( Customer.builder().customerName(name)
+            customerRepository.save(Customer.builder().customerName(name)
                     .customerEmail(email)
                     .customerPassword(DecoderUtils.generateSecurePassword(pwd, email))
                     .customerDob(birthday)
@@ -184,6 +217,7 @@ public class RentDogController {
     @GetMapping(path = "/logout")
     public String logout(HttpSession session) {
         session.removeAttribute("user");
+        session.removeAttribute("userID");
         return "redirect:/login";
     }
 }

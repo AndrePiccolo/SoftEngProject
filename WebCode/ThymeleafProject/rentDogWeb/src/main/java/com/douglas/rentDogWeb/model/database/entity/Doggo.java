@@ -30,8 +30,26 @@ public class Doggo {
     @Column(name = "doggo_description", nullable = false, length = 500)
     private String dogDesc;
 
-    @Column(name = "doggo_availability", nullable = false, length = 20)
-    private String dogAvailability;
+    @Column(name = "doggo_availability_sunday", nullable = false, length = 1)
+    private Integer availabilitySunday;
+
+    @Column(name = "doggo_availability_monday", nullable = false, length = 1)
+    private Integer availabilityMonday;
+
+    @Column(name = "doggo_availability_tuesday", nullable = false, length = 1)
+    private Integer availabilityTuesday;
+
+    @Column(name = "doggo_availability_wednesday", nullable = false, length = 1)
+    private Integer availabilityWednesday;
+
+    @Column(name = "doggo_availability_thursday", nullable = false, length = 1)
+    private Integer availabilityThursday;
+
+    @Column(name = "doggo_availability_friday", nullable = false, length = 1)
+    private Integer availabilityFriday;
+
+    @Column(name = "doggo_availability_saturday", nullable = false, length = 1)
+    private Integer availabilitySaturday;
 
     @Column(name = "doggo_price_per_hour", nullable = false)
     private Double dogPriceHour;
