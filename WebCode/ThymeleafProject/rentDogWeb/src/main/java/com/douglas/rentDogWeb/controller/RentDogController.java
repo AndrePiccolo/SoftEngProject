@@ -34,7 +34,7 @@ public class RentDogController {
             "Poodles", "Border Collie", "Beagle", "Irish Setter", "Staffordshire Bull Terrier",
             "Cavalier King Charles Spaniel", "Cockapoo", "Boxer", "Shih Tzu", "French Bulldog",
             "Basset Hound", "Cocker Spaniel", "Greyhound", "Great Dane", "Samoyed", "West Highland Terriers",
-            "Pembroke Welsh Corgi"));
+            "Pembroke Welsh Corgi", "Mixed Breed"));
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -57,7 +57,7 @@ public class RentDogController {
             if (!user.isEmpty() && !pwd.isEmpty()) {
 
                 Customer dbRegister = customerRepository.findCustomerByCustomerEmailEquals(user);
-                if (!dbRegister.getCustomerPassword().isEmpty()) {
+                if (dbRegister!=null && !dbRegister.getCustomerPassword().isEmpty()) {
                     if (DecoderUtils.verifyUserPassword(pwd, dbRegister.getCustomerPassword(), user)) {
                         session.setAttribute("user", dbRegister.getCustomerEmail());
                         session.setAttribute("userID", dbRegister.getCustomerId());
@@ -221,11 +221,36 @@ public class RentDogController {
     }
 
     @GetMapping(path = "/search")
-    public String search(Model model, HttpSession session) {
+    public String search(Model model, HttpSession session,
+                         @RequestParam(name = "inputKeyword", required = false) String searchKey,
+                         @RequestParam(name = "inputSearchType", required = false) String searchType) {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         } else {
+            List<Doggo> dogList = dogRepository.findAll();
+            model.addAttribute("dogList",dogList);
+        }
+        return "/search";
+    }
 
+    @PostMapping(path = "/search")
+    public String searchFilterApply(Model model, HttpSession session,
+                                    @RequestParam(name = "inputKeyword", required = false) String searchKey,
+                                    @RequestParam(name = "inputSearchType", required = false) String searchType) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        } else {
+            List<Doggo> dogList;
+            if("dog".equals(searchType)){
+                dogList = dogRepository.findDoggoByDogNameContains(searchKey);
+            } else if("breed".equals(searchType)) {
+                dogList = dogRepository.findDoggoByDogBreedContains(searchKey);
+            } else if("size".equals(searchType)){
+                dogList = dogRepository.findDoggoByDogSizeContains(searchKey);
+            }else{
+                dogList = dogRepository.findAll();
+            }
+            model.addAttribute("dogList",dogList);
         }
         return "/search";
     }
