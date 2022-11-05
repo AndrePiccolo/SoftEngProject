@@ -11,6 +11,5 @@ public interface DogRepository  extends JpaRepository<Doggo, Integer> {
 
     List<Doggo> findDoggoByDogNameContains(String dogName);
     List<Doggo> findDoggoByDogBreedContains(String dogBreed);
-
     List<Doggo> findDoggoByDogSizeContains(String dogSize);
 }

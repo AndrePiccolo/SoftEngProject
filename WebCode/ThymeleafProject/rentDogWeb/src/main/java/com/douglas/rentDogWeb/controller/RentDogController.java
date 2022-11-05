@@ -1,6 +1,8 @@
 package com.douglas.rentDogWeb.controller;
 
+import com.douglas.rentDogWeb.controller.entity.ContractResponse;
 import com.douglas.rentDogWeb.controller.entity.DogRequest;
+import com.douglas.rentDogWeb.model.database.entity.Contract;
 import com.douglas.rentDogWeb.model.database.entity.Customer;
 import com.douglas.rentDogWeb.model.database.entity.Doggo;
 import com.douglas.rentDogWeb.model.database.repository.ContractRepository;
@@ -28,7 +30,6 @@ import java.util.*;
 public class RentDogController {
 
     private static final String LOGIN = "login";
-    private static final String REGISTER = "register";
     private static final List<String> LIST_BREED = new ArrayList<>(Arrays.asList("Golden Retrievers",
             "Boston Terriers", "Labrador Retrievers",
             "Poodles", "Border Collie", "Beagle", "Irish Setter", "Staffordshire Bull Terrier",
@@ -94,11 +95,28 @@ public class RentDogController {
 
     @GetMapping(path = "/contract")
     public String contract(Model model, HttpSession session) {
+
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
-        } else {
-
         }
+        Optional<List<Contract>> contractlist = contractRepository.findContractsByRenterId(
+                    Integer.parseInt(session.getAttribute("userID").toString()));
+
+        List<ContractResponse> contractTable = new ArrayList<>();
+        for (Contract contract: contractlist.get()) {
+
+            Integer start = Integer.parseInt(contract.getContractStarted().replace(":",""));
+            Integer end = Integer.parseInt(contract.getContractEnded().replace(":",""));
+
+            Optional<Doggo> dogFromDB = dogRepository.findById(contract.getDogId());
+            contractTable.add(ContractResponse.builder()
+                            .ownerName(customerRepository.findById(contract.getOwnerID()).get().getCustomerName())
+                            .dogName(dogFromDB.get().getDogName())
+                            .contract(contract)
+                            .price(Math.round((end - start)/100)* dogFromDB.get().getDogPriceHour())
+                    .build());
+        }
+        model.addAttribute("contractTable", contractTable);
         return "/contract";
     }
 
@@ -265,7 +283,7 @@ public class RentDogController {
     }
 
     @PostMapping(path = "/cardfields")
-    public String verifyDogCardField(Model model,
+    public String verifyDogCardField(Model model, HttpSession session,
                                      @RequestParam(name = "dogid", required = false) String dogID,
                                      @RequestParam(name = "inputDateTime", required = false) String date,
                                      @RequestParam(name = "inputStartTime", required = false) String startTime,
@@ -304,9 +322,23 @@ public class RentDogController {
                 searchErrorMessage = "Start Date must be before than end date and more than 1 hour";
                 return "redirect:/search";
             }
-//            else{
-//            log.info("total hours: " + Math.round((end - start)/100));
-//            }
+
+            Optional<Doggo> dogDB = dogRepository.findById(Integer.parseInt(dogID));
+            if(dogDB.isEmpty()){
+                log.error("Failed to retrieve dog");
+                return "redirect:/search";
+            }
+
+            contractRepository.save(Contract.builder()
+                            .renterId(Integer.parseInt(session.getAttribute("userID").toString()))
+                            .ownerID(dogDB.get().getCustomer().getCustomerId())
+                            .dogId(Integer.parseInt(dogID))
+                            .createDate(new SimpleDateFormat("yyyy-MM-dd").parse(LocalDate.now().toString()))
+                            .rentDate(new SimpleDateFormat("yyyy-MM-dd").parse(date))
+                            .contractStarted(startTime)
+                            .contractEnded(endTime)
+                            .contractConfirmation(0)
+                    .build());
 
             searchShowError = false;
         } catch (ParseException e) {
