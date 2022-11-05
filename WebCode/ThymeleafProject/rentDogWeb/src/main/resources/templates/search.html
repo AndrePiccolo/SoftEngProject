@@ -46,6 +46,9 @@
                 </div>
             </form>
         </div>
+        <div th:if="${inputErrorMessage}" class="alert alert-danger alert-dismissible fade show text-center"
+             role="alert" th:text="${errorMessage}">
+        </div>
         <div class="row">
             <div class="col-md-3" th:each="dog:${dogList}">
                 <div class="card">
@@ -63,24 +66,30 @@
                                                 (dog.getAvailabilityThursday == 1 ? '|Thursday|' : ' ') +
                                                 (dog.getAvailabilityFriday == 1 ? '|Friday|' : ' ') +
                                                 (dog.getAvailabilitySaturday == 1 ? '|Saturday|' : ' ')}|">Availability</p>
-                        <form>
-                            <div class="col-mb-1">
-                                <label for="inputDateTime" class="form-label">Select Date</label>
-                                <input type="date" class="form-control" id="inputDateTime">
+                        <form th:action="@{/cardfields}" method="post">
+                            <input type="hidden" th:value="${dog.getDogId}" name="dogid" />
+                            <div class="row g-2 m-1">
+                                <div class="col-auto">
+                                    <label for="inputDateTime" class="form-label">Select Date</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="date" class="form-control col-auto" id="inputDateTime" name="inputDateTime">
+                                </div>
                             </div>
                             <div class="row g-2 m-1">
                                 <div class="col-auto">
                                     <label for="inputStartTime" class="form-label">Start Time</label>
                                 </div>
                                 <div class="col-auto">
-                                    <input type="time" class="form-control" id="inputStartTime">
+                                    <input type="time" class="form-control" id="inputStartTime" name="inputStartTime">
                                 </div>
-
+                            </div>
+                            <div class="row g-2 m-1">
                                 <div class="col-auto">
                                     <label for="inputEndTime" class="form-label">End Time</label>
                                 </div>
                                 <div class="col-auto">
-                                    <input type="time" class="form-control" id="inputEndTime">
+                                    <input type="time" class="form-control" id="inputEndTime" name="inputEndTime">
                                 </div>
                             </div>
                             <div class="d-flex justify-content-center">

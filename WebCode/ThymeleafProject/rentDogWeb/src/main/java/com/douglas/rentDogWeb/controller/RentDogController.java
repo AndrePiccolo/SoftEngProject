@@ -3,6 +3,7 @@ package com.douglas.rentDogWeb.controller;
 import com.douglas.rentDogWeb.controller.entity.DogRequest;
 import com.douglas.rentDogWeb.model.database.entity.Customer;
 import com.douglas.rentDogWeb.model.database.entity.Doggo;
+import com.douglas.rentDogWeb.model.database.repository.ContractRepository;
 import com.douglas.rentDogWeb.model.database.repository.CustomerRepository;
 import com.douglas.rentDogWeb.model.database.repository.DogRepository;
 import com.douglas.rentDogWeb.security.DecoderUtils;
@@ -16,11 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.time.format.TextStyle;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -36,10 +36,16 @@ public class RentDogController {
             "Basset Hound", "Cocker Spaniel", "Greyhound", "Great Dane", "Samoyed", "West Highland Terriers",
             "Pembroke Welsh Corgi", "Mixed Breed"));
 
+    private boolean searchShowError = false;
+    private String searchErrorMessage = "";
+
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
     private DogRepository dogRepository;
+
+    @Autowired
+    private ContractRepository contractRepository;
 
     @GetMapping(path = "/login")
     public String login(Model model) {
@@ -229,6 +235,9 @@ public class RentDogController {
         } else {
             List<Doggo> dogList = dogRepository.findAll();
             model.addAttribute("dogList",dogList);
+            model.addAttribute("inputErrorMessage", searchShowError);
+            model.addAttribute("errorMessage", searchErrorMessage);
+
         }
         return "/search";
     }
@@ -253,6 +262,84 @@ public class RentDogController {
             model.addAttribute("dogList",dogList);
         }
         return "/search";
+    }
+
+    @PostMapping(path = "/cardfields")
+    public String verifyDogCardField(Model model,
+                                     @RequestParam(name = "dogid", required = false) String dogID,
+                                     @RequestParam(name = "inputDateTime", required = false) String date,
+                                     @RequestParam(name = "inputStartTime", required = false) String startTime,
+                                     @RequestParam(name = "inputEndTime", required = false) String endTime){
+
+        try{
+            LocalDate localDate = LocalDate.now();
+            if(localDate.isAfter(LocalDate.parse(date)) || localDate.isEqual(LocalDate.parse(date))){
+                searchShowError = true;
+                searchErrorMessage = "Date is invalid, need to be in the future";
+                return "redirect:/search";
+            }
+
+            //check if dog is available in the specified day
+            if(!contractRepository.findContractByDogIdAndRentDate(Integer.parseInt(dogID),
+                    new SimpleDateFormat("yyyy-MM-dd").parse(date)).isEmpty()){
+                searchShowError = true;
+                searchErrorMessage =  "Date is not available";
+                return "redirect:/search";
+            }
+
+            //get day of the week to check if dog is available
+            DayOfWeek day = LocalDate.parse(date).getDayOfWeek();
+            if(!checkDogAvailability(day.getDisplayName(TextStyle.FULL, Locale.CANADA),
+                    Integer.parseInt(dogID))){
+                searchShowError = true;
+                searchErrorMessage = "Dog not available in selected day of week";
+                return "redirect:/search";
+            }
+
+            //compare start time and end time
+            Integer start = Integer.parseInt(startTime.replace(":",""));
+            Integer end = Integer.parseInt(endTime.replace(":",""));
+            if(start >= end || (end - start) < 100 ){
+                searchShowError = true;
+                searchErrorMessage = "Start Date must be before than end date and more than 1 hour";
+                return "redirect:/search";
+            }
+//            else{
+//            log.info("total hours: " + Math.round((end - start)/100));
+//            }
+
+            searchShowError = false;
+        } catch (ParseException e) {
+            log.error("Date format conversion failed");
+            return "redirect:/search";
+        }
+
+        return "redirect:/contract";
+    }
+
+    private boolean checkDogAvailability(String dayOfWeek, Integer dogId){
+        Optional<Doggo> dog = dogRepository.findById(dogId);
+        if(dog.isEmpty()){
+            return false;
+        }
+        switch (dayOfWeek){
+            case "Sunday":
+                return dog.get().getAvailabilitySunday() == 1;
+            case "Monday":
+                return dog.get().getAvailabilityMonday() == 1;
+            case "Tuesday":
+                return dog.get().getAvailabilityTuesday() == 1;
+            case "Wednesday":
+                return dog.get().getAvailabilityWednesday() == 1;
+            case "Thursday":
+                return dog.get().getAvailabilityThursday() == 1;
+            case "Friday":
+                return dog.get().getAvailabilityFriday() == 1;
+            case "Saturday":
+                return dog.get().getAvailabilitySaturday() == 1;
+            default:
+                return false;
+        }
     }
 
     @GetMapping(path = "/logout")
