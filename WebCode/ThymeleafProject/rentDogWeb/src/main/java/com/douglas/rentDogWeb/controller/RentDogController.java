@@ -39,6 +39,8 @@ public class RentDogController {
 
     private boolean searchShowError = false;
     private String searchErrorMessage = "";
+    private boolean updateUserError = false;
+    private String updateUserMessage = "";
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -51,6 +53,8 @@ public class RentDogController {
     @GetMapping(path = "/login")
     public String login(Model model) {
         model.addAttribute("errorMessage", "F");
+        updateUserError = false;
+        searchShowError = false;
         return "/login";
     }
 
@@ -79,7 +83,6 @@ public class RentDogController {
         return "/login";
     }
 
-
     @GetMapping(path = "/home")
     public String home(Model model, HttpSession session) {
         if (session.getAttribute("user") == null) {
@@ -89,6 +92,10 @@ public class RentDogController {
             String welcome = "Welcome, " + dbRegister.getCustomerName() + "!";
             model.addAttribute("user", dbRegister);
             model.addAttribute("welcomeMessage", welcome);
+
+            model.addAttribute("inputErrorMessage", updateUserError);
+            model.addAttribute("errorMessage", updateUserMessage);
+
         }
         return "/home";
     }
@@ -235,6 +242,37 @@ public class RentDogController {
     public String registeruser(Model model) {
         model.addAttribute("inputErrorMessage", "F");
         return "/registeruser";
+    }
+
+    @PostMapping(path = "/updateUser")
+    public String updateUser(Model model, HttpSession session,
+                             @RequestParam(name = "inputName", required = false) String userName,
+                             @RequestParam(name = "inputPhoneNumber", required = false) String phone,
+                             @RequestParam(name = "inputAddress", required = false) String address,
+                             @RequestParam(name = "inputCity", required = false) String city,
+                             @RequestParam(name = "inputProvince", required = false) String province,
+                             @RequestParam(name = "inputPostalCode", required = false) String potalCode) {
+    if(userName.isBlank() || phone.isBlank() || address.isBlank() || city.isBlank() ||
+        province.isBlank() || potalCode.isBlank()){
+        updateUserError = true;
+        updateUserMessage = "All fields must be filled";
+
+        return "redirect:/home";
+    }
+    updateUserError = false;
+
+        Customer dbRegister = customerRepository.findCustomerByCustomerEmailEquals(
+                session.getAttribute("user").toString());
+        dbRegister.setCustomerName(userName);
+        dbRegister.setCustomerPhoneNumber(phone);
+        dbRegister.setCustomerStreetAddress(address);
+        dbRegister.setCustomerCity(city);
+        dbRegister.setCustomerProvince(province);
+        dbRegister.setCustomerPostalCode(potalCode);
+
+        customerRepository.save(dbRegister);
+
+        return "redirect:/home";
     }
 
     @PostMapping(path = "/registeruser")
