@@ -23,24 +23,21 @@
         </nav>
     </div>
     <div class="col-md-12">
-        <form class="row m-2">
+        <form class="row m-2" th:action="@{/searchContract}" method="post">
             <div class="col-auto">
-                <label for="inputSearchType" class="form-label-lg fw-bolder">Search By:</label>
+                <label for="startDate" class="form-label fw-bolder">Start Date:</label>
             </div>
             <div class="col-auto">
-                <select id="inputSearchType" class="form-select-lg">
-                    <option value="contractId">Contract ID</option>
-                    <option value="month">Month</option>
-                </select>
+                <input type="date" class="form-control" id="startDate" name="startDate">
             </div>
             <div class="col-auto">
-                <label for="inputKeyword" class="form-label-lg fw-bolder">Keyword:</label>
+                <label for="endDate" class="form-label fw-bolder">End Date:</label>
             </div>
             <div class="col-auto">
-                <input type="text" class="form-control-lg" id="inputKeyword">
+                <input type="date" class="form-control" id="endDate" name="endDate">
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-primary btn-lg">Search</button>
+                <button type="submit" class="btn btn-primary btn">Search</button>
             </div>
         </form>
     </div>
@@ -50,59 +47,42 @@
                 <tr>
                     <th scope="col">Contratct ID</th>
                     <th scope="col">Owner</th>
-                    <th scope="col">Renter</th>
-                    <th scope="col">Create Date</th>
+                    <th scope="col">Dog</th>
+                    <th scope="col">Rent Date</th>
                     <th scope="col">Start Date Time</th>
                     <th scope="col">End Date Time</th>
                     <th scope="col">Total Price</th>
-                    <th scope="col">Status</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>11/11/11</td>
-                    <td>11/14/11 10:00</td>
-                    <td>11/14/11 15:00</td>
-                    <td>44</td>
-                    <td>Finished</td>
-                    <td><button type="submit" class="btn btn-primary disabled">Start</button></td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>11/11/11</td>
-                    <td>--</td>
-                    <td>--</td>
-                    <td>0</td>
-                    <td>Waiting Aproval</td>
-                    <td><button type="submit" class="btn btn-primary disabled">Start</button></td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>11/11/11</td>
-                    <td>--</td>
-                    <td>--</td>
-                    <td>0</td>
-                    <td>Approved</td>
-                    <td><button type="submit" class="btn btn-primary">Start</button></td>
-                </tr>
-                <tr>
-                    <th scope="row">4</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>11/11/11</td>
-                    <td>11/14/11 10:00</td>
-                    <td>--</td>
-                    <td>0</td>
-                    <td>In Progress</td>
-                    <td><button type="submit" class="btn btn-primary">Stop</button></td>
+                <tr th:each="contract:${contractTable}">
+                    <th scope="row" th:text="${contract.getContract.getId}"></th>
+                    <td th:text="${contract.getOwnerName}"></td>
+                    <td th:text="${contract.getDogName}"></td>
+                    <td th:text="${contract.getContract.getRentDate}"></td>
+                    <td th:text="${contract.getContract.getContractStarted}"></td>
+                    <td th:text="${contract.getContract.getContractEnded}"></td>
+                    <td th:text="${contract.getPrice}"></td>
+                    <th:block th:switch="${contract.getContract.getContractConfirmation}">
+                        <div th:case="0">
+                            <td>
+                                <form th:action="@{/cancelContract}" method="post">
+                                    <button type="submit" class="btn btn-primary">Cancel</button>
+                                    <input type="hidden" th:value="${contract.getContract.getId}" id="contractIDCancel" name="contractIDCancel">
+                                </form>
+                            </td>
+                        </div>
+                        <div th:case="1">
+                            <td><button type="submit" class="btn btn-primary disabled">In progress</button></td>
+                        </div>
+                        <div th:case="2">
+                            <td><button type="submit" class="btn btn-primary disabled">Closed</button></td>
+                        </div>
+                        <div th:case="3">
+                            <td><button type="submit" class="btn btn-primary disabled">Cancelled</button></td>
+                        </div>
+                    </th:block>
                 </tr>
             </tbody>
         </table>
@@ -110,10 +90,10 @@
     <div class="col-md-12">
         <form class="row m-2">
             <div class="col-auto">
-                <label for="totalValue" class="form-label-lg fw-bolder">Total Value:</label>
+                <label for="totalValue" class="form-label fw-bolder">Total Value:</label>
             </div>
             <div class="col-auto">
-                <input type="text" class="form-control-lg" id="totalValue" readonly>
+                <input type="text" class="form-control" id="totalValue" readonly th:value="${totalPay}">
             </div>
         </form>
     </div>

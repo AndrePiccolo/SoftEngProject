@@ -57,4 +57,7 @@ public class Doggo {
 
     @Column(name = "doggo_price_per_hour", nullable = false)
     private Double dogPriceHour;
+
+    @Column(name = "doggo_active", nullable = false, length = 1)
+    private Integer dogActive;
 }

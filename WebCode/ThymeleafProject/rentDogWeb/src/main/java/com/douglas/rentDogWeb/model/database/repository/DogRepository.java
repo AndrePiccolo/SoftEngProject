@@ -9,8 +9,8 @@ import java.util.List;
 @Repository
 public interface DogRepository  extends JpaRepository<Doggo, Integer> {
 
-    List<Doggo> findDoggoByDogNameContains(String dogName);
-    List<Doggo> findDoggoByDogBreedContains(String dogBreed);
-
-    List<Doggo> findDoggoByDogSizeContains(String dogSize);
+    List<Doggo> findDoggoByDogNameContainsAndDogActive(String dogName, Integer active);
+    List<Doggo> findDoggoByDogBreedContainsAndDogActive(String dogBreed, Integer active);
+    List<Doggo> findDoggoByDogSizeContainsAndDogActive(String dogSize, Integer active);
+    List<Doggo> findDoggoByDogActive(Integer active);
 }

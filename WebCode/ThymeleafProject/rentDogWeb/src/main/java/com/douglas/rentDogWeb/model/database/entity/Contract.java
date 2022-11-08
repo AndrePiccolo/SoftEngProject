@@ -1,7 +1,6 @@
 package com.douglas.rentDogWeb.model.database.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -9,6 +8,9 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Table(name = "contract")
 public class Contract {
     @Id
@@ -33,13 +35,11 @@ public class Contract {
     @Column(name = "contract_rent_date", nullable = false)
     private Date rentDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "contract_started")
-    private Date contractStarted;
+    private String contractStarted;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "contract_ended")
-    private Date contractEnded;
+    private String contractEnded;
 
     @Column(name = "confirm_contract")
     private Integer contractConfirmation;

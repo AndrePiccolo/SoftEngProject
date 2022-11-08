@@ -1,6 +1,8 @@
 package com.douglas.rentDogWeb.controller;
 
+import com.douglas.rentDogWeb.controller.entity.ContractResponse;
 import com.douglas.rentDogWeb.controller.entity.DogRequest;
+import com.douglas.rentDogWeb.model.database.entity.Contract;
 import com.douglas.rentDogWeb.model.database.entity.Customer;
 import com.douglas.rentDogWeb.model.database.entity.Doggo;
 import com.douglas.rentDogWeb.model.database.repository.ContractRepository;
@@ -28,7 +30,6 @@ import java.util.*;
 public class RentDogController {
 
     private static final String LOGIN = "login";
-    private static final String REGISTER = "register";
     private static final List<String> LIST_BREED = new ArrayList<>(Arrays.asList("Golden Retrievers",
             "Boston Terriers", "Labrador Retrievers",
             "Poodles", "Border Collie", "Beagle", "Irish Setter", "Staffordshire Bull Terrier",
@@ -38,6 +39,8 @@ public class RentDogController {
 
     private boolean searchShowError = false;
     private String searchErrorMessage = "";
+    private boolean updateUserError = false;
+    private String updateUserMessage = "";
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -50,6 +53,8 @@ public class RentDogController {
     @GetMapping(path = "/login")
     public String login(Model model) {
         model.addAttribute("errorMessage", "F");
+        updateUserError = false;
+        searchShowError = false;
         return "/login";
     }
 
@@ -78,7 +83,6 @@ public class RentDogController {
         return "/login";
     }
 
-
     @GetMapping(path = "/home")
     public String home(Model model, HttpSession session) {
         if (session.getAttribute("user") == null) {
@@ -88,18 +92,106 @@ public class RentDogController {
             String welcome = "Welcome, " + dbRegister.getCustomerName() + "!";
             model.addAttribute("user", dbRegister);
             model.addAttribute("welcomeMessage", welcome);
+
+            model.addAttribute("inputErrorMessage", updateUserError);
+            model.addAttribute("errorMessage", updateUserMessage);
+
         }
         return "/home";
     }
 
     @GetMapping(path = "/contract")
     public String contract(Model model, HttpSession session) {
+
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
-        } else {
-
         }
+        Optional<List<Contract>> contractlist = contractRepository.findContractsByRenterId(
+                    Integer.parseInt(session.getAttribute("userID").toString()));
+
+        populateContractList(model, contractlist);
         return "/contract";
+    }
+
+    @PostMapping(path = "/cancelContract")
+    public String cancelContract(Model model, HttpSession session,
+                                 @RequestParam(name = "contractIDCancel", required = false) Integer contractId) {
+        Optional<Contract> updatedContract = contractRepository.findById(contractId);
+        updatedContract.get().setContractConfirmation(3);
+        contractRepository.save(updatedContract.get());
+        return "redirect:/contract";
+    }
+
+    @PostMapping(path = "/searchContract")
+    public String searchContract(Model model, HttpSession session,
+                                 @RequestParam(name = "startDate", required = false) String startDate,
+                                 @RequestParam(name = "endDate", required = false) String endDate) {
+
+        try{
+            Optional<List<Contract>> contractlist;
+            if(endDate.isBlank() && startDate.isBlank()){
+                return "redirect:/contract";
+            }else if(endDate.isBlank()){
+                contractlist = contractRepository.
+                        findContractsByRentDateAfterAndRenterId(
+                                new SimpleDateFormat("yyyy-MM-dd").parse(startDate),
+                                Integer.parseInt(session.getAttribute("userID").toString()));
+
+            }else if (startDate.isBlank()){
+                contractlist = contractRepository.
+                        findContractsByRentDateBeforeAndRenterId(
+                                new SimpleDateFormat("yyyy-MM-dd").parse(endDate),
+                                Integer.parseInt(session.getAttribute("userID").toString()));
+            } else{
+                contractlist = contractRepository.
+                        findContractsByRentDateAfterAndRentDateBeforeAndRenterId(
+                                new SimpleDateFormat("yyyy-MM-dd").parse(startDate),
+                                new SimpleDateFormat("yyyy-MM-dd").parse(endDate),
+                                Integer.parseInt(session.getAttribute("userID").toString()));
+            }
+
+            populateContractList(model, contractlist);
+
+        }catch (ParseException ex){
+            log.error("Date conversion expception: " + ex.getMessage());
+        }
+
+        return "/contract";
+    }
+
+    private void populateContractList(Model model, Optional<List<Contract>> contractlist){
+        List<ContractResponse> contractTable = new ArrayList<>();
+        Double totalPrice = 0.0;
+        for (Contract contract: contractlist.get()) {
+
+            if (contract.getContractConfirmation() != 3) {
+                if(convertToLocalDate(contract.getRentDate()).isBefore(LocalDate.now())){
+                    contract.setContractConfirmation(2);
+                }else if(convertToLocalDate(contract.getRentDate()).isAfter(LocalDate.now())){
+                    contract.setContractConfirmation(0);
+                }else{
+                    contract.setContractConfirmation(1);
+                }
+            }
+
+            Integer start = Integer.parseInt(contract.getContractStarted().replace(":",""));
+            Integer end = Integer.parseInt(contract.getContractEnded().replace(":",""));
+
+            Optional<Doggo> dogFromDB = dogRepository.findById(contract.getDogId());
+            Double price = Math.round((end - start)/100)* dogFromDB.get().getDogPriceHour();
+            if(contract.getContractConfirmation() == 2){
+                totalPrice += price;
+            }
+            contractTable.add(ContractResponse.builder()
+                    .ownerName(customerRepository.findById(contract.getOwnerID()).get().getCustomerName())
+                    .dogName(dogFromDB.get().getDogName())
+                    .contract(contract)
+                    .price(price)
+                    .build());
+        }
+        model.addAttribute("contractTable", contractTable);
+        model.addAttribute("totalPay", totalPrice);
+
     }
 
     @GetMapping(path = "/registerdog")
@@ -141,6 +233,7 @@ public class RentDogController {
                 .availabilityThursday((dog.getThursday() == null) ? 0 : 1)
                 .availabilityFriday((dog.getFriday() == null) ? 0 : 1)
                 .availabilitySaturday((dog.getSaturday() == null) ? 0 : 1)
+                .dogActive(1)
                 .build());
 
         return "redirect:/home";
@@ -150,6 +243,48 @@ public class RentDogController {
     public String registeruser(Model model) {
         model.addAttribute("inputErrorMessage", "F");
         return "/registeruser";
+    }
+
+    @PostMapping(path = "/updateUser")
+    public String updateUser(Model model, HttpSession session,
+                             @RequestParam(name = "inputName", required = false) String userName,
+                             @RequestParam(name = "inputPhoneNumber", required = false) String phone,
+                             @RequestParam(name = "inputAddress", required = false) String address,
+                             @RequestParam(name = "inputCity", required = false) String city,
+                             @RequestParam(name = "inputProvince", required = false) String province,
+                             @RequestParam(name = "inputPostalCode", required = false) String potalCode) {
+    if(userName.isBlank() || phone.isBlank() || address.isBlank() || city.isBlank() ||
+        province.isBlank() || potalCode.isBlank()){
+        updateUserError = true;
+        updateUserMessage = "All fields must be filled";
+
+        return "redirect:/home";
+    }
+    updateUserError = false;
+
+        Customer dbRegister = customerRepository.findCustomerByCustomerEmailEquals(
+                session.getAttribute("user").toString());
+        dbRegister.setCustomerName(userName);
+        dbRegister.setCustomerPhoneNumber(phone);
+        dbRegister.setCustomerStreetAddress(address);
+        dbRegister.setCustomerCity(city);
+        dbRegister.setCustomerProvince(province);
+        dbRegister.setCustomerPostalCode(potalCode);
+
+        customerRepository.save(dbRegister);
+
+        return "redirect:/home";
+    }
+
+    @PostMapping(path = "/removeDog")
+    public String updateUser(Model model, HttpSession session,
+                             @RequestParam(name = "removeDog", required = false) Integer dogID) {
+
+        Optional<Doggo> dog = dogRepository.findById(dogID);
+        dog.get().setDogActive(0);
+        dogRepository.save(dog.get());
+
+        return "redirect:/home";
     }
 
     @PostMapping(path = "/registeruser")
@@ -233,7 +368,7 @@ public class RentDogController {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         } else {
-            List<Doggo> dogList = dogRepository.findAll();
+            List<Doggo> dogList = dogRepository.findDoggoByDogActive(1);
             model.addAttribute("dogList",dogList);
             model.addAttribute("inputErrorMessage", searchShowError);
             model.addAttribute("errorMessage", searchErrorMessage);
@@ -251,13 +386,13 @@ public class RentDogController {
         } else {
             List<Doggo> dogList;
             if("dog".equals(searchType)){
-                dogList = dogRepository.findDoggoByDogNameContains(searchKey);
+                dogList = dogRepository.findDoggoByDogNameContainsAndDogActive(searchKey, 1);
             } else if("breed".equals(searchType)) {
-                dogList = dogRepository.findDoggoByDogBreedContains(searchKey);
+                dogList = dogRepository.findDoggoByDogBreedContainsAndDogActive(searchKey, 1);
             } else if("size".equals(searchType)){
-                dogList = dogRepository.findDoggoByDogSizeContains(searchKey);
+                dogList = dogRepository.findDoggoByDogSizeContainsAndDogActive(searchKey, 1);
             }else{
-                dogList = dogRepository.findAll();
+                dogList = dogRepository.findDoggoByDogActive(1);
             }
             model.addAttribute("dogList",dogList);
         }
@@ -265,7 +400,7 @@ public class RentDogController {
     }
 
     @PostMapping(path = "/cardfields")
-    public String verifyDogCardField(Model model,
+    public String verifyDogCardField(Model model, HttpSession session,
                                      @RequestParam(name = "dogid", required = false) String dogID,
                                      @RequestParam(name = "inputDateTime", required = false) String date,
                                      @RequestParam(name = "inputStartTime", required = false) String startTime,
@@ -304,9 +439,23 @@ public class RentDogController {
                 searchErrorMessage = "Start Date must be before than end date and more than 1 hour";
                 return "redirect:/search";
             }
-//            else{
-//            log.info("total hours: " + Math.round((end - start)/100));
-//            }
+
+            Optional<Doggo> dogDB = dogRepository.findById(Integer.parseInt(dogID));
+            if(dogDB.isEmpty()){
+                log.error("Failed to retrieve dog");
+                return "redirect:/search";
+            }
+
+            contractRepository.save(Contract.builder()
+                            .renterId(Integer.parseInt(session.getAttribute("userID").toString()))
+                            .ownerID(dogDB.get().getCustomer().getCustomerId())
+                            .dogId(Integer.parseInt(dogID))
+                            .createDate(new SimpleDateFormat("yyyy-MM-dd").parse(LocalDate.now().toString()))
+                            .rentDate(new SimpleDateFormat("yyyy-MM-dd").parse(date))
+                            .contractStarted(startTime)
+                            .contractEnded(endTime)
+                            .contractConfirmation(0)
+                    .build());
 
             searchShowError = false;
         } catch (ParseException e) {
@@ -347,5 +496,9 @@ public class RentDogController {
         session.removeAttribute("user");
         session.removeAttribute("userID");
         return "redirect:/login";
+    }
+
+    private LocalDate convertToLocalDate(Date dateToConvert) {
+        return new java.sql.Date(dateToConvert.getTime()).toLocalDate();
     }
 }
