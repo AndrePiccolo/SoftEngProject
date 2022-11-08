@@ -12,4 +12,7 @@ import java.util.Optional;
 public interface ContractRepository extends JpaRepository<Contract, Integer> {
     Optional<Contract> findContractByDogIdAndRentDate(Integer dogId, Date rentDate);
     Optional<List<Contract>> findContractsByRenterId(Integer renterId);
+    Optional<List<Contract>> findContractsByRentDateAfterAndRentDateBeforeAndRenterId(Date start, Date end, Integer renterId);
+    Optional<List<Contract>> findContractsByRentDateAfterAndRenterId(Date start, Integer renterId);
+    Optional<List<Contract>> findContractsByRentDateBeforeAndRenterId(Date end, Integer renterId);
 }

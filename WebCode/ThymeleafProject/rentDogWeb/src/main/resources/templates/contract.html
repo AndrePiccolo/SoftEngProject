@@ -23,18 +23,18 @@
         </nav>
     </div>
     <div class="col-md-12">
-        <form class="row m-2">
+        <form class="row m-2" th:action="@{/searchContract}" method="post">
             <div class="col-auto">
                 <label for="startDate" class="form-label fw-bolder">Start Date:</label>
             </div>
             <div class="col-auto">
-                <input type="date" class="form-control" id="startDate">
+                <input type="date" class="form-control" id="startDate" name="startDate">
             </div>
             <div class="col-auto">
                 <label for="endDate" class="form-label fw-bolder">End Date:</label>
             </div>
             <div class="col-auto">
-                <input type="date" class="form-control" id="endDate">
+                <input type="date" class="form-control" id="endDate" name="endDate">
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-primary btn">Search</button>
@@ -52,7 +52,6 @@
                     <th scope="col">Start Date Time</th>
                     <th scope="col">End Date Time</th>
                     <th scope="col">Total Price</th>
-                    <th scope="col">Status</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
@@ -64,9 +63,26 @@
                     <td th:text="${contract.getContract.getRentDate}"></td>
                     <td th:text="${contract.getContract.getContractStarted}"></td>
                     <td th:text="${contract.getContract.getContractEnded}"></td>
-                    <td th:text="${contract.getPrice}">44</td>
-                    <td>Finished</td>
-                    <td><button type="submit" class="btn btn-primary disabled">Start</button></td>
+                    <td th:text="${contract.getPrice}"></td>
+                    <th:block th:switch="${contract.getContract.getContractConfirmation}">
+                        <div th:case="0">
+                            <td>
+                                <form th:action="@{/cancelContract}" method="post">
+                                    <button type="submit" class="btn btn-primary">Cancel</button>
+                                    <input type="hidden" th:value="${contract.getContract.getId}" id="contractIDCancel" name="contractIDCancel">
+                                </form>
+                            </td>
+                        </div>
+                        <div th:case="1">
+                            <td><button type="submit" class="btn btn-primary disabled">In progress</button></td>
+                        </div>
+                        <div th:case="2">
+                            <td><button type="submit" class="btn btn-primary disabled">Closed</button></td>
+                        </div>
+                        <div th:case="3">
+                            <td><button type="submit" class="btn btn-primary disabled">Cancelled</button></td>
+                        </div>
+                    </th:block>
                 </tr>
             </tbody>
         </table>
@@ -77,7 +93,7 @@
                 <label for="totalValue" class="form-label fw-bolder">Total Value:</label>
             </div>
             <div class="col-auto">
-                <input type="text" class="form-control" id="totalValue" readonly>
+                <input type="text" class="form-control" id="totalValue" readonly th:value="${totalPay}">
             </div>
         </form>
     </div>
