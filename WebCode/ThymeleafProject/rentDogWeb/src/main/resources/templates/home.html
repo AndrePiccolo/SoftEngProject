@@ -86,20 +86,27 @@
                         </thead>
                         <tbody>
                             <tr th:each="dog:${user.getDog()}">
-                                <th scope="row" th:text="${dog.getDogId}"></th>
-                                <td th:text="${dog.getDogName}"></td>
-                                <td th:text="${dog.getDogSize}"></td>
-                                <td th:text="${dog.getDogBreed}">Breed</td>
-                                <td th:text="${dog.getDogDesc}"></td>
-                                <td th:text="${(dog.getAvailabilitySunday == 1 ? '|Sunday|' : ' ') +
+                                <div th:if="${dog.getDogActive()==1}">
+                                    <th scope="row" th:text="${dog.getDogId}"></th>
+                                    <td th:text="${dog.getDogName}"></td>
+                                    <td th:text="${dog.getDogSize}"></td>
+                                    <td th:text="${dog.getDogBreed}">Breed</td>
+                                    <td th:text="${dog.getDogDesc}"></td>
+                                    <td th:text="${(dog.getAvailabilitySunday == 1 ? '|Sunday|' : ' ') +
                                                 (dog.getAvailabilityMonday == 1 ? '|Monday|' : ' ') +
                                                 (dog.getAvailabilityTuesday == 1 ? '|Tuesday|' : ' ') +
                                                 (dog.getAvailabilityWednesday == 1 ? '|Wednesday|' : ' ') +
                                                 (dog.getAvailabilityThursday == 1 ? '|Thursday|' : ' ') +
                                                 (dog.getAvailabilityFriday == 1 ? '|Friday|' : ' ') +
                                                 (dog.getAvailabilitySaturday == 1 ? '|Saturday|' : ' ')}"></td>
-                                <td th:text="${dog.getDogPriceHour}"></td>
-                                <td><button type="submit" class="btn btn-danger">D</button></td>
+                                    <td th:text="${dog.getDogPriceHour}"></td>
+                                    <td>
+                                        <form th:action="@{/removeDog}" method="post">
+                                            <button type="submit" class="btn btn-danger">D</button>
+                                            <input type="hidden" th:value="${dog.getDogId}" id="removeDog" name="removeDog">
+                                        </form>
+                                    </td>
+                                </div>
                             </tr>
                         </tbody>
                     </table>

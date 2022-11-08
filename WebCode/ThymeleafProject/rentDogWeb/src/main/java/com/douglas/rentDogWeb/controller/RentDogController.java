@@ -233,6 +233,7 @@ public class RentDogController {
                 .availabilityThursday((dog.getThursday() == null) ? 0 : 1)
                 .availabilityFriday((dog.getFriday() == null) ? 0 : 1)
                 .availabilitySaturday((dog.getSaturday() == null) ? 0 : 1)
+                .dogActive(1)
                 .build());
 
         return "redirect:/home";
@@ -271,6 +272,17 @@ public class RentDogController {
         dbRegister.setCustomerPostalCode(potalCode);
 
         customerRepository.save(dbRegister);
+
+        return "redirect:/home";
+    }
+
+    @PostMapping(path = "/removeDog")
+    public String updateUser(Model model, HttpSession session,
+                             @RequestParam(name = "removeDog", required = false) Integer dogID) {
+
+        Optional<Doggo> dog = dogRepository.findById(dogID);
+        dog.get().setDogActive(0);
+        dogRepository.save(dog.get());
 
         return "redirect:/home";
     }
@@ -356,7 +368,7 @@ public class RentDogController {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         } else {
-            List<Doggo> dogList = dogRepository.findAll();
+            List<Doggo> dogList = dogRepository.findDoggoByDogActive(1);
             model.addAttribute("dogList",dogList);
             model.addAttribute("inputErrorMessage", searchShowError);
             model.addAttribute("errorMessage", searchErrorMessage);
@@ -374,13 +386,13 @@ public class RentDogController {
         } else {
             List<Doggo> dogList;
             if("dog".equals(searchType)){
-                dogList = dogRepository.findDoggoByDogNameContains(searchKey);
+                dogList = dogRepository.findDoggoByDogNameContainsAndDogActive(searchKey, 1);
             } else if("breed".equals(searchType)) {
-                dogList = dogRepository.findDoggoByDogBreedContains(searchKey);
+                dogList = dogRepository.findDoggoByDogBreedContainsAndDogActive(searchKey, 1);
             } else if("size".equals(searchType)){
-                dogList = dogRepository.findDoggoByDogSizeContains(searchKey);
+                dogList = dogRepository.findDoggoByDogSizeContainsAndDogActive(searchKey, 1);
             }else{
-                dogList = dogRepository.findAll();
+                dogList = dogRepository.findDoggoByDogActive(1);
             }
             model.addAttribute("dogList",dogList);
         }
