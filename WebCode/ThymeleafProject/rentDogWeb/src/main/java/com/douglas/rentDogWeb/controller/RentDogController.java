@@ -218,6 +218,17 @@ public class RentDogController {
             model.addAttribute("breedList", LIST_BREED);
             return "/registerdog";
         }
+        if(dog.getDescription().length()>400){
+            model.addAttribute("inputErrorMessage", "T");
+            model.addAttribute("errorMessage", "Please, Description must be less than 400 characters.");
+            model.addAttribute("breedList", LIST_BREED);
+        }
+
+        if(Double.parseDouble(dog.getPrice()) < 10){
+            model.addAttribute("inputErrorMessage", "T");
+            model.addAttribute("errorMessage", "Please, Minimum price per hour must be $10.00.");
+            model.addAttribute("breedList", LIST_BREED);
+        }
 
         dogRepository.save(Doggo.builder()
                 .customer(customerRepository.findCustomerByCustomerEmailEquals(session.getAttribute("user").toString()))
@@ -303,9 +314,9 @@ public class RentDogController {
         try {
 
             //check if all the fields are values
-            if (name.isEmpty() || email.isEmpty() || pwd.isEmpty() || confirmPwd.isEmpty() ||
-                    dob.isEmpty() || phone.isEmpty() || address.isEmpty() || city.isEmpty() ||
-                    province.isEmpty() || postalCode.isEmpty() || acceptedTerms.isEmpty()) {
+            if (name.isBlank() || email.isBlank() || pwd.isBlank() || confirmPwd.isBlank() ||
+                    dob.isBlank() || phone.isBlank() || address.isBlank() || city.isBlank() ||
+                    province.isBlank() || postalCode.isBlank() || acceptedTerms.isBlank()) {
                 model.addAttribute("inputErrorMessage", "T");
                 model.addAttribute("errorMessage", "Please, fill up all the fields.");
                 return "/registeruser";
@@ -368,7 +379,8 @@ public class RentDogController {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         } else {
-            List<Doggo> dogList = dogRepository.findDoggoByDogActive(1);
+            Customer customer = customerRepository.findCustomerByCustomerEmailEquals(session.getAttribute("user").toString());
+            List<Doggo> dogList = dogRepository.findDoggoByDogActiveAndCustomerIsNot(1, customer);
             model.addAttribute("dogList",dogList);
             model.addAttribute("inputErrorMessage", searchShowError);
             model.addAttribute("errorMessage", searchErrorMessage);
@@ -392,7 +404,8 @@ public class RentDogController {
             } else if("size".equals(searchType)){
                 dogList = dogRepository.findDoggoByDogSizeContainsAndDogActive(searchKey, 1);
             }else{
-                dogList = dogRepository.findDoggoByDogActive(1);
+                Customer customer = customerRepository.findCustomerByCustomerEmailEquals(session.getAttribute("user").toString());
+                dogList = dogRepository.findDoggoByDogActiveAndCustomerIsNot(1, customer);
             }
             model.addAttribute("dogList",dogList);
         }
