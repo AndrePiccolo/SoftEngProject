@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 @Builder
 @Component
 public class ContractResponse {
+    private String rentee;
     private String ownerName;
     private String dogName;
     private Contract contract;

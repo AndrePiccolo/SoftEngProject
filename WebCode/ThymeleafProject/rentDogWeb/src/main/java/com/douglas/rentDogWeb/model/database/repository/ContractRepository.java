@@ -15,4 +15,10 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
     Optional<List<Contract>> findContractsByRentDateAfterAndRentDateBeforeAndRenterId(Date start, Date end, Integer renterId);
     Optional<List<Contract>> findContractsByRentDateAfterAndRenterId(Date start, Integer renterId);
     Optional<List<Contract>> findContractsByRentDateBeforeAndRenterId(Date end, Integer renterId);
+
+    // For admin purpose
+    Optional<List<Contract>> findContractsByRentDateAfterAndRentDateBefore(Date start, Date end);
+    Optional<List<Contract>> findContractsByRentDateAfter(Date start);
+    Optional<List<Contract>> findContractsByRentDateBefore(Date end);
 }
+
