@@ -52,8 +52,7 @@
         <div class="row">
             <div class="col-md-3" th:each="dog:${dogList}">
                 <div class="card">
-                    <img th:src="|/images/dogs/${#strings.replace(dog.getDogBreed,' ','_')}.jpg|" class="card-img-top" alt="dog image"
-                    height="276" width="174">
+                    <img th:src="|/images/dogs/${#strings.replace(dog.getDogBreed,' ','_')}.jpg|" class="card-img-top" alt="dog image">
                     <div class="card-body">
                         <h5 class="card-title text-center" th:text="|Name: ${dog.getDogName}|"></h5>
                         <p class="card-text text-center" th:text="|Breed: ${dog.getDogBreed} / Size: ${dog.getDogSize}|"></p>

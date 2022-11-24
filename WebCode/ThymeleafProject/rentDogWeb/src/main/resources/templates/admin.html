@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rent a dog</title>
+    <link rel="stylesheet" th:href="@{/styles/home.css}">
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div>
+        <nav class="nav nav-pills flex-column flex-sm-row bg-light">
+            <a class="navbar-brand" href="#">
+                <img th:src="@{/images/logo.jpg}" alt="dog Image" width="130" height="90">
+            </a>
+            <a class="flex-lg-fill text-lg-center nav-link fs-4" th:href="@{logout}">Log out</a>
+        </nav>
+    </div>
+    <div class="col-md-12">
+        <form class="row m-2" th:action="@{/searchContractAdmin}" method="post">
+            <div class="col-auto">
+                <label for="startDate" class="form-label fw-bolder">Start Date:</label>
+            </div>
+            <div class="col-auto">
+                <input type="date" class="form-control" id="startDate" name="startDate">
+            </div>
+            <div class="col-auto">
+                <label for="endDate" class="form-label fw-bolder">End Date:</label>
+            </div>
+            <div class="col-auto">
+                <input type="date" class="form-control" id="endDate" name="endDate">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary btn">Search</button>
+            </div>
+        </form>
+    </div>
+    <div id="mainContainer" class="container-fluid d-flex justify-content-center">
+        <table class="table table-light table-hover table-bordered m-3">
+            <thead>
+                <tr>
+                    <th scope="col">Contratct ID</th>
+                    <th scope="col">Rentee</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">Dog</th>
+                    <th scope="col">Rent Date</th>
+                    <th scope="col">Start Date Time</th>
+                    <th scope="col">End Date Time</th>
+                    <th scope="col">Total Price</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="contract:${contractTable}">
+                    <th scope="row" th:text="${contract.getContract.getId}"></th>
+                    <td th:text="${contract.getRentee}"></td>
+                    <td th:text="${contract.getOwnerName}"></td>
+                    <td th:text="${contract.getDogName}"></td>
+                    <td th:text="${contract.getContract.getRentDate}"></td>
+                    <td th:text="${contract.getContract.getContractStarted}"></td>
+                    <td th:text="${contract.getContract.getContractEnded}"></td>
+                    <td th:text="${contract.getPrice}"></td>
+                    <th:block th:switch="${contract.getContract.getContractConfirmation}">
+                        <div th:case="0">
+                            <td>Not Started</td>
+                        </div>
+                        <div th:case="1">
+                            <td>In Progress</td>
+                        </div>
+                        <div th:case="2">
+                            <td>Closed</td>
+                        </div>
+                        <div th:case="3">
+                            <td>Cancelled</td>
+                        </div>
+                    </th:block>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-12">
+        <form class="row m-2">
+            <div class="col-auto">
+                <label for="totalValue" class="form-label fw-bolder">Total Value:</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" id="totalValue" readonly th:value="${totalPay}">
+            </div>
+            <div class="col-auto">
+                <label for="totalValueDiscount" class="form-label fw-bolder">Total Value Received (20%):</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" id="totalValueDiscount" readonly th:value="${totalPay*0.2}">
+            </div>
+        </form>
+    </div>
+    <footer>
+        <p class="text-center">Copyright &copy;2022</p>
+    </footer>
+</body>
+
+</html>
